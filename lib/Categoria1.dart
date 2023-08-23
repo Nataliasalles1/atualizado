@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
 
 class Categoria1 extends StatefulWidget {
   const Categoria1({super.key});
@@ -14,6 +13,22 @@ class Categoria1 extends StatefulWidget {
 class Estrutura extends State<Categoria1> {
   List<int> hoveredIndices =
       List<int>.generate(imagensComDescricoes.length, (index) => -1);
+
+  String searchText = "";
+  List<List<String>> filteredProducts = [];
+
+  void _filterProducts(String text) {
+    setState(() {
+      filteredProducts.clear();
+      for (int i = 0; i < imagensComDescricoes.length; i++) {
+        if (imagensComDescricoes[i][1]
+            .toLowerCase()
+            .contains(text.toLowerCase())) {
+          filteredProducts.add(imagensComDescricoes[i]);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +57,11 @@ class Estrutura extends State<Categoria1> {
             ),
             SizedBox(height: 10),
             TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchText = value;
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Digite aqui para buscar',
                 prefixIcon: Icon(Icons.search),
@@ -56,7 +76,7 @@ class Estrutura extends State<Categoria1> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
+              margin: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
               alignment: Alignment.topCenter,
               child: Image.asset(
                 'assets/imagens.jpeg',
@@ -66,24 +86,31 @@ class Estrutura extends State<Categoria1> {
             ),
             Container(
               color: Colors.grey[400],
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+              padding: 
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
               child: Wrap(
                 spacing: 16.0,
                 runSpacing: 16.0,
                 alignment: WrapAlignment.center,
-                children: List.generate(imagensComDescricoes.length, (index) {
+                children: List.generate(filteredProducts.length, (index) {
                   return buildImageCard(
-                    imagensComDescricoes[index][0], // Primeiro item é a imagem
-                    imagensComDescricoes[index]
-                        [1], // Segundo item é a descrição
+                    filteredProducts[index][0], // Primeiro item é a imagem
+                    filteredProducts[index][1], // Segundo item é a descrição
                     index,
                   );
                 }),
               ),
             ),
-            SizedBox(height: 100.0), // Espaço extra para permitir a rolagem
+           const SizedBox(
+                height: 100.0), // Espaço extra para permitir a rolagem
           ],
         ),
+      ),
+       floatingActionButton: ElevatedButton(
+        onPressed: () {
+          _filterProducts(searchText);
+        },
+        child: const Text('Buscar'),
       ),
     );
   }
@@ -106,16 +133,16 @@ class Estrutura extends State<Categoria1> {
                 height: 150.0,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               descricao,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
                 // adicionarAoCarrinho(produto);
@@ -123,9 +150,9 @@ class Estrutura extends State<Categoria1> {
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
                 onPrimary: Colors.black,
-                side: BorderSide(color: Colors.pink, width: 2.0),
+                side: const BorderSide(color: Colors.pink, width: 2.0),
               ),
-              child: Text('Adicionar ao Carrinho'),
+              child: const Text('Adicionar ao Carrinho'),
             ),
           ],
         ),
